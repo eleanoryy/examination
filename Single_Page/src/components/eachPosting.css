@@ -1,0 +1,40 @@
+#main{
+	display: flex;
+	flex-direction: column;
+	background-color: #fff;
+	border-radius: 10px;
+	margin-right: 3%;
+	width:60vw;
+}
+
+#title{
+	margin-top: 20px;
+	margin-left: 20px;
+	font-size: 14px;
+	font-weight: bold;
+	color:#333;
+}
+
+#salary{
+	margin-top: 10px;
+	margin-left: 20px;
+	font-size: 16px;
+	font-weight: bold;
+	color:#333;
+}
+
+#company_box{
+	margin-top: 10px;
+	margin-left: 20px;
+	display: flex;
+	flex-direction: row;
+	font-size: 14px;
+	color:#333;
+}
+
+#desc{
+	margin-top: 10px;
+	margin-bottom:20px;
+	margin-left: 20px;
+	margin-right: 20%;
+}
