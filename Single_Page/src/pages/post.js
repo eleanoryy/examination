@@ -93,7 +93,7 @@ class Post extends Component {
     
     if(prevProps.Post.edit!= undefined && prevProps.Post.edit.ev_error != undefined){
       if(prevProps.Post.edit.ev_result == this.props.Post.edit.ev_result){
-        // console.log('ads info');
+        
         
         if(this.props.Post.edit.ev_error==0){
           const { dispatch } = this.props;
@@ -110,49 +110,43 @@ class Post extends Component {
           // window.location.href = window.location.href;
           var temp =[];
           var show = [];
-          var end = 0;
+          
           var that = this;
-          firestore.collection('job posting').get().then((snapshot)=>{
-            for(let i=0;i<snapshot.size;i++){
 
-              const data = snapshot.docs[i].data();
-              data['id'] = snapshot.docs[i].id;
-              temp.push(data);
+          setTimeout(function() { 
+            firestore.collection('job posting').get().then((snapshot)=>{
+              for(let i=0;i<snapshot.size;i++){
 
-              //show list
-              if(data['show']==0){
-                show.push(data)
+                const data = snapshot.docs[i].data();
+                data['id'] = snapshot.docs[i].id;
+                temp.push(data);
+
+                //show list
+                if(data['show']==0){
+                  show.push(data)
+                }
               }
-            }
 
 
-            // if(this.state.end+15 < show.length){
-            //   end = this.state.end+15;
-            // }else{
-            //   end = show.length;
-            // }
+              // if(this.state.end+15 < show.length){
+              //   end = this.state.end+15;
+              // }else{
+              //   end = show.length;
+              // }
+              
+              that.setState({
+                end:end,
+                target:{},
+                loading:false,
+                jump:true,
+                temp:temp,
+                show_jobs:show
 
-            that.setState({
-              end:end,
-              target:{},
-              loading:false,
-              jump:true,
-              temp:temp,
-              show_jobs:show
+              })
+              
 
             })
-            
-
-          })
-          
-          // this.setState({
-          //   // start:start,
-          //   end:end,
-          //   target:{},
-          //   loading:false,
-          //   jump:true
-          // });
-          // this.handleScroll.bind(this);
+          },2000);
           
           
         }
@@ -178,7 +172,8 @@ class Post extends Component {
           var temp =[];
           var show = [];
           var that = this;
-          firestore.collection('job posting').get().then((snapshot)=>{
+          setTimeout(function() { 
+              firestore.collection('job posting').get().then((snapshot)=>{
             for(let i=0;i<snapshot.size;i++){
 
               const data = snapshot.docs[i].data();
@@ -209,12 +204,11 @@ class Post extends Component {
             
 
           })
-          // this.setState({
-          //   // start:start,
-          //   end:end,
-          //   loading:false
-          //   // target:{}
-          // });
+
+
+          }, 2000);
+          
+         
           
           
           
@@ -231,13 +225,14 @@ class Post extends Component {
           
           message.success('Search Successfully!');
           var start = 0;
-          var end = 0;
+          // var end = 0;
           // window.location.href = window.location.href;
+
           this.setState({
             show_jobs:this.props.Post.search.ev_result.search_list,
             loading:false,
             start:start,
-            end:end
+            // end:end
           });
           const { dispatch } = this.props;
           dispatch({

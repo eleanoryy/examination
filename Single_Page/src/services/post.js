@@ -3,19 +3,20 @@ import { stringify } from 'qs';
 
 
 
-var url = 'https://us-central1-react-interview-b6875.cloudfunctions.net';
+var url = 'https://us-central1-react-interview-b6875.cloudfunctions.net/post';
 
 
 
 
 export async function edit(params) {
-  console.log("service.js")
+  // console.log("service.js")
   var data = params;
   let options = {
     method: 'POST',
     mode: 'cors',
     headers: {
-       "Content-Type": "application/json; encoding=utf-8"
+       "Content-Type": "application/json; encoding=utf-8",
+       "Access-Control-Allow-Origin": "*"
     },
     body: JSON.stringify(data)
   }
@@ -39,17 +40,22 @@ export async function deletePost(params) {
   console.log("service.js")
   var data = params;
   let options = {
-    method: 'POST',
+    method: 'PUT',
     mode: 'cors',
     headers: {
-       "Content-Type": "application/json; encoding=utf-8"
+       
+       "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers":  "Origin, X-Requested-With, Content-Type, Accept",
+      "Access-Control-Allow-Method":  "PUT",
+     
+       
     },
-    body: JSON.stringify(data)
+    body: {}
   }
-  console.log(data)
+  // console.log(data)
 
 
-  var target = url+'/softDelete';
+  var target = url+'/'+data['id'];
 
   // console.log(loginUrl)
   return fetch(target, options)
@@ -63,7 +69,7 @@ export async function deletePost(params) {
 
 
 export async function search(params) {
-  console.log("service.js")
+  // console.log("service.js")
   var data = params;
   let options = {
     method: 'POST',
@@ -73,7 +79,7 @@ export async function search(params) {
     },
     body: JSON.stringify(data)
   }
-  console.log(data)
+  // console.log(data)
 
 
   var target = url+'/search';

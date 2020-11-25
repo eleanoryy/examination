@@ -1,11 +1,35 @@
 const functions = require('firebase-functions');
-const cors = require('cors')({ origin: "*", credentials: true, methods: "GET" });
+
+const cors = require('cors');
+
+const express = require('express')
+const app = express()
+
 var cheerio = require('cheerio');  
 const https = require('https');
 var random = require("random-string");
-// var fs = require('fs');
+
 var admin = require("firebase-admin");
 admin.initializeApp();
+
+// const corsOptions = {
+//       credentials: true,
+//       origin: '*',
+//       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+//       preflightContinue: false,
+//     }
+
+app.use(cors());
+// app.options('*', cors({"preflightContinue": true}))
+// app.use(function(req, res, next) {
+//    res.header("Access-Control-Allow-Origin", "*");
+//    res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
+//    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//    next();
+// });
+
+
+
 
 var start = 0;
 
@@ -17,13 +41,12 @@ exports.webCrawler = functions.https.onRequest((request, response) => {
 
 	getData(url);
   
-  	response.send({ ev_error: 0, ev_result: { 'status': 0 }, ev_message: '' });
+  	// response.send({ ev_error: 0, ev_result: { 'status': 0 }, ev_message: '' });
   	return true;
 });
 
-
-exports.edit = functions.https.onRequest((request, response) => {
-	cors(request, response, () => {
+app.post('/edit', (request, response) => {
+	
 	
 		var id = request.body.id;
 		var keys = request.body.keys;
@@ -52,15 +75,14 @@ exports.edit = functions.https.onRequest((request, response) => {
 	          response.send({ ev_error: 1, ev_context:'No Such Result', ev_message: '' });
 	      });
   // ...
-	});
-	
+	// });
 
 });
 
 
-exports.softDelete = functions.https.onRequest((request, response) => {
-	cors(request, response, () => {
-		var id = request.body.id;
+app.put("/:id",  (request, response) => {
+		
+		var id = request.params.id;
 		
 
 		admin.firestore().collection('job posting').doc(id).get().then(snapshot => {
@@ -76,12 +98,12 @@ exports.softDelete = functions.https.onRequest((request, response) => {
 		}).catch(error => {
 	          response.send({ ev_error: 1, ev_context:'No Such Result', ev_message: '' });
 	      });
-	});
+	// });
 });
 
 
-exports.search = functions.https.onRequest((request, response) => {
-	cors(request, response, () => {
+app.post("/search",  (request, response) => {
+  
 		var kw = request.body.keyword;
 
 		var search_list = [];
@@ -125,8 +147,120 @@ exports.search = functions.https.onRequest((request, response) => {
 		}).catch(error => {
 	          response.send({ ev_error: 1, ev_context:'No Such Result', ev_message: '' });
 	      });
-	});
+	// });
 });
+
+
+
+
+exports.post= functions.https.onRequest(app);
+
+
+// exports.edit = functions.https.onRequest((request, response) => {
+// 	cors(request, response, () => {
+	
+// 		var id = request.body.id;
+// 		var keys = request.body.keys;
+// 		//[{key:kkkk,value:llll},{key:kkkk,value:pppp}]
+// 		// var content = request.query.content;
+// 		console.log(id);
+// 		console.log(keys);
+
+// 		admin.firestore().collection('job posting').doc(id).get().then(snapshot => {
+// 		    if (!snapshot.empty) {
+// 		        // console.log(snapshot.data());
+// 		        var data = snapshot.data();
+// 		        var key;
+// 		        var value;
+// 		        for(var i=0;i<keys.length;i++){
+// 		        	key = keys[i].key;
+// 		        	value = keys[i].content;
+// 		        	data[key] = value;
+// 		        }
+		        
+// 		        const writeResult = admin.firestore().collection('job posting').doc(id).set(data);
+// 		        response.send({ ev_error: 0, ev_result: { 'status': 0 }, ev_message: '' });
+// 		        return true;
+// 		    } else {response.send({ ev_error: 1, ev_context:'No Such Result', ev_message: '' });return true;}
+// 		}).catch(error => {
+// 	          response.send({ ev_error: 1, ev_context:'No Such Result', ev_message: '' });
+// 	      });
+//   // ...
+// 	});
+	
+
+// });
+
+
+// exports.softDelete = functions.https.onRequest((request, response) => {
+// 	cors(request, response, () => {
+// 		var id = request.body.id;
+		
+
+// 		admin.firestore().collection('job posting').doc(id).get().then(snapshot => {
+// 		    if (!snapshot.empty) {
+// 		        // console.log(snapshot.data());
+// 		        var data = snapshot.data();
+// 		        data['show'] = 1;
+// 		        const writeResult = admin.firestore().collection('job posting').doc(id).set(data);
+// 		        response.send({ ev_error: 0, ev_result: { 'status': 0 }, ev_message: '' });
+// 		        return true;
+
+// 		    } else {response.send({ ev_error: 1, ev_context:'No Such Result', ev_message: '' });return true;}
+// 		}).catch(error => {
+// 	          response.send({ ev_error: 1, ev_context:'No Such Result', ev_message: '' });
+// 	      });
+// 	});
+// });
+
+
+// exports.search = functions.https.onRequest((request, response) => {
+// 	cors(request, response, () => {
+// 		var kw = request.body.keyword;
+
+// 		var search_list = [];
+// 		admin.firestore().collection('job posting').get().then(snapshot => {
+
+// 		    if (!snapshot.empty) {
+// 		        // console.log(snapshot.data());
+// 		        for (let i = 0; i < snapshot.size; i++) {
+// 		            const data = snapshot.docs[i].data();
+// 		            var target =false;
+// 		            if(data['title'].includes(kw)){
+// 		            	target = true
+// 		            }
+// 		            if(data['desc'].includes(kw)){
+// 		            	target = true
+// 		            }
+// 		            if(data['location'].includes(kw)){
+// 		            	target = true
+// 		            }
+// 		            if(data['salary'].includes(kw)){
+// 		            	target = true
+// 		            }
+// 		            if(data['company'].includes(kw)){
+// 		            	target = true
+// 		            }
+
+// 		            if(target){
+// 		            	search_list.push(data);
+// 		            }
+		            
+
+// 	        	}
+// 	        	// console.log(search_list);
+// 		        response.send({ ev_error: 0, ev_result: { 'search_list': search_list }, ev_message: '' });
+// 		        return true;
+
+// 		    } else {
+// 		    	response.send({ ev_error: 1, ev_context:'No Such Result', ev_message: '' });
+// 		    	return true;
+// 		    }
+// 		}).catch(error => {
+// 	          response.send({ ev_error: 1, ev_context:'No Such Result', ev_message: '' });
+// 	      });
+// 	});
+// });
 
 function getData(url){
 	https.get(url, res => {
@@ -143,6 +277,7 @@ function getData(url){
 	        getData(tempUrl); // 递归继续抓取
 	      } else { // 结束抓取
 	         // res.send({ ev_error: 0, ev_result: { 'status': 0 }, ev_message: '' });
+	         res.send({ ev_error: 0, ev_result: { 'status': 0 }, ev_message: '' });
 	         return 0;
 	      }
 	    })
