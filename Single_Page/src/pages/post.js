@@ -39,6 +39,10 @@ class Post extends Component {
     edit:false,
     loading:false,
     jump:false,
+    tags:['watched','saved','later'],
+    tag:false,
+    activeTag:[],
+    tag_id:''
 
   };
 
@@ -53,6 +57,7 @@ class Post extends Component {
 
           const data = snapshot.docs[i].data();
           data['id'] = snapshot.docs[i].id;
+          data['tags'] = [];
           temp.push(data);
 
           //show list
@@ -119,6 +124,7 @@ class Post extends Component {
 
                 const data = snapshot.docs[i].data();
                 data['id'] = snapshot.docs[i].id;
+                data['tags'] = [];
                 temp.push(data);
 
                 //show list
@@ -178,6 +184,7 @@ class Post extends Component {
 
               const data = snapshot.docs[i].data();
               data['id'] = snapshot.docs[i].id;
+              data['tags'] = [];
               temp.push(data);
 
               //show list
@@ -227,6 +234,7 @@ class Post extends Component {
           var start = 0;
           // var end = 0;
           // window.location.href = window.location.href;
+
 
           this.setState({
             show_jobs:this.props.Post.search.ev_result.search_list,
@@ -502,6 +510,56 @@ delete(e){
 
 
 }
+
+tags(e){
+  var temp = this.state.show_jobs.findIndex((each)=>each['id']==e['id']);
+  var show_list = this.state.show_jobs;
+  show_list[temp]['tags'] = [];
+  console.log(temp)
+  this.setState({
+    tag:true,
+    show_jobs:show_list,
+    tag_id:temp
+  })
+
+}
+
+tagSubmit(e){
+  this.setState({
+    tag:false
+  })
+}
+
+tagCancel(e){
+  this.setState({
+    tag:false
+  })
+
+}
+
+activeTag(e){
+  var tags = this.state.activeTag;
+  if(this.state.activeTag.length!=0){
+    var exist = tags.includes(e);
+    if(!exist){
+      tags.push(e);
+    }else{
+      tags = tags.filter((each)=>each!=e);
+    }
+  }else{
+    tags.push(e);
+  }
+
+  var show_list = this.state.show_jobs;
+  show_list[this.state.tag_id]['tags'] = tags;
+
+  // console.log(tags);
+  this.setState({
+    activeTag:tags,
+    show_jobs:show_list
+  })
+
+}
   
   
 
@@ -529,9 +587,9 @@ delete(e){
       <div id={styles.main} >
         <div id={styles.header}>
             <div id={styles.search_box}>
-              <Input id={styles.search} placeholder="Search Job Postings"  onBlur={this.search.bind(this)} />
+              <Input id={styles.search} placeholder="Search Job Postings"   />
               <div id={styles.icon_box}>
-                <img style={{marginTop:10,marginLeft:8}} src={Image.basic.search}></img>   
+                <img style={{marginTop:10,marginLeft:8}} src={Image.basic.search} onClick={this.search.bind(this)}></img>   
               </div>
             </div>
         </div>
@@ -541,11 +599,14 @@ delete(e){
               return <div id={styles.job}>
                 <EachPosting job={e}/>
                 <div id={styles.label} style={{marginRight:20}} onClick={this.edit.bind(this,e)}>Edit</div>
-                <div id={styles.label} onClick={this.delete.bind(this,e)}>Delete</div>
+                <div id={styles.label}  style={{marginRight:20}} onClick={this.delete.bind(this,e)}>Delete</div>
+                <div id={styles.label} onClick={this.tags.bind(this,e)}>Tags</div>
                 </div>
             })}
           </div>
         </Spin>
+
+
         <Modal
           title="Edit Posting"
           visible={this.state.edit}
@@ -563,6 +624,19 @@ delete(e){
             <Input style={{width:'60%'}} placeholder="Salary"  onBlur={this.salary.bind(this)} />
             <div id={styles.label} style={{marginTop:10}}>Description</div>
             <TextArea rows={4} placeholder="Description" onBlur={this.desc.bind(this)} />
+          </div>
+        </Modal>
+
+        <Modal
+          title="Add Tags"
+          visible={this.state.tag}
+          onOk={this.tagSubmit.bind(this)}
+          onCancel={this.tagCancel.bind(this)}
+        >
+          <div id={styles.tags} style={{marginLeft:10}}>
+            {this.state.tags.map((e)=>{
+              return <div id={styles.tag} onClick={this.activeTag.bind(this,e)} style={{marginRight:10}}>{e}</div>
+            })}
           </div>
         </Modal>
         

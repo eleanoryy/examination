@@ -72,7 +72,7 @@ class EachPosting extends Component {
     //           <a href="javascript:;">edit</a>
     //           <Divider type="vertical" />
     //         </span>
-
+    // console.log(this.props.job)
 
 
 
@@ -87,6 +87,11 @@ class EachPosting extends Component {
         </div>
         <div id={styles.desc}>
           {this.props.job.desc}
+        </div>
+        <div id={styles.tags}>
+          {this.props.job['tags']!=undefined && this.props.job.tags.map((e)=>{
+            return<div id={styles.tag} style={{marginRight:10}}>{e}</div>
+          })}
         </div>
         
       </div>

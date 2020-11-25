@@ -38,3 +38,18 @@
 	margin-left: 20px;
 	margin-right: 20%;
 }
+
+#tags{
+	display: flex;
+	flex-direction: row;
+}
+#tag{
+	width:100px;
+	text-align: center;
+	height:40px;
+	background-color: #5475F2;
+	border-radius: 5px;
+	color:#fff;
+	font-size: 14px;
+	padding-top: 10px;
+}
